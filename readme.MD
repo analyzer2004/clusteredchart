@@ -1,7 +1,6 @@
 # 3D Clustered Chart
 
-**ClusteredChart** is a 3D representation of the grouped column chart visualizing categorical dataset in three-dimensional space. The example below demonstrates the most common use case for displaying a multi-series categorical dataset.
-
+**ClusteredChart** is a 3D representation of the grouped column chart visualizing categorical dataset in three-dimensional space.
 For live demos and sample codes, please see [3D Clustered Chart](https://observablehq.com/@analyzer2004/3d-clustered-chart)
 
 <img src="https://github.com/analyzer2004/clusteredchart/blob/master/images/cover.png" width="768">
