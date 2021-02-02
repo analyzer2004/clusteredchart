@@ -406,8 +406,10 @@ class ClusteredChart {
                 tx = row[this._column.x],
                 x = this._x(tx) + margin.x / 2;
 
-            if (this._floor.showTicks)
-                this._addText(tx, hsx, 0, x + hsx + qsx, 0, this._dims.depth + margin.z + this._tickPadding, halfPI, 0, halfPI);
+            if (this._floor.showTicks) {                
+                const t = this._addText(tx, hsx, 0, x + hsx + qsx, 0, 0, halfPI, Math.PI, -halfPI);
+                t.position.z = this._calcTextWidth(t) + this._dims.depth + margin.z + this._tickPadding;
+            }
             
             this._keysZ.forEach(key => {
                 const
@@ -459,9 +461,8 @@ class ClusteredChart {
             // backwall ticks (x wall)
             ticks.forEach(tick => {
                 const y = this._y(tick);
-                const text = this._addText(fmtr(tick), th, 0, 0, y, backWall.z, 0, 0, 0);
-                if (!text.geometry.boundingBox) text.geometry.computeBoundingBox();
-                text.position.x = -text.geometry.boundingBox.max.x - this._tickPadding;
+                const t = this._addText(fmtr(tick), th, 0, 0, y, backWall.z, 0, 0, 0);
+                t.position.x = -this._calcTextWidth(t) - this._tickPadding;
                 this._addLine(
                     new THREE.Vector3(backWall.x, y, backWall.z + thickness),
                     new THREE.Vector3(sideWall.x - thickness, y, backWall.z + thickness)
@@ -469,16 +470,20 @@ class ClusteredChart {
             });
             // sidewall ticks (z wall)
             ticks.forEach(tick => {
-                const y = this._y(tick);
-                const text = this._addText(fmtr(tick), th, 0, sideWall.x, y, 0, 0, Math.PI / 2, 0);
-                if (!text.geometry.boundingBox) text.geometry.computeBoundingBox();
-                text.position.z = floor.depth + text.geometry.boundingBox.max.x + this._tickPadding;
+                const y = this._y(tick);                
+                const t = this._addText(fmtr(tick), th, 0, sideWall.x, y, 0, 0, -Math.PI / 2, 0);
+                t.position.z = floor.depth + this._tickPadding;
                 this._addLine(
                     new THREE.Vector3(sideWall.x - thickness, y, backWall.z + thickness),
                     new THREE.Vector3(sideWall.x - thickness, y, floor.depth)
                 );
             });
         }
+    }
+
+    _calcTextWidth(text) {
+        if (!text.geometry.boundingBox) text.geometry.computeBoundingBox();
+        return text.geometry.boundingBox.max.x;
     }
 
     _createHint() {
