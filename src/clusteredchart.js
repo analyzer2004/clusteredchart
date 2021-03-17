@@ -153,7 +153,7 @@ class ClusteredChart {
 
         if (this._request) cancelAnimationFrame(this._request);
 
-        cleanScene();
+        cleanup();
         this._hint.dispose();
         this._detachEvents();        
 
@@ -163,7 +163,7 @@ class ClusteredChart {
 
         return this;
         
-        function cleanScene() {
+        function cleanup() {
             const scene = that._scene;
             for (let i = scene.children.length - 1; i >= 0; i--) {
                 let obj = scene.children[i];
@@ -215,6 +215,7 @@ class ClusteredChart {
         this._scene.position.y = this._dims.height / 2;
         this._scene.position.z = -this._dims.depth / 2;
         this._scene.background = new THREE.Color(this._options.backgroundColor);
+        this._render();
 
         this._hint = this._createHint();
     }
@@ -242,8 +243,7 @@ class ClusteredChart {
                 if (x) x[d[column.z]] = +d[column.y];
             });
 
-            this._chartData = [...xmap.values()];
-            console.log(this._chartData);
+            this._chartData = [...xmap.values()];            
         }
         else {
             if (!keys.includes(column.x))
@@ -610,13 +610,13 @@ class ClusteredChart {
 
     _mousemove(e) {
         e.preventDefault();
-
-        this._mouseScreen.x = e.layerX;
-        this._mouseScreen.y = e.layerY;
-        this._mouseScene.x = (e.layerX / this._width) * 2 - 1;
-        this._mouseScene.y = -(e.layerY / this._height) * 2 + 1;
-
-        this._intersect();
+        if (e.target instanceof HTMLCanvasElement) {
+            this._mouseScreen.x = e.offsetX;
+            this._mouseScreen.y = e.offsetY;
+            this._mouseScene.x = (e.offsetX / this._width) * 2 - 1;
+            this._mouseScene.y = -(e.offsetY / this._height) * 2 + 1;
+            this._intersect();
+        }
     }
 
     _intersect() {
